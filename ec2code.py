@@ -91,18 +91,15 @@ def extract_video_features_from_frame_features(cluster_features=False):
   start_time = time.time()
   filepaths = glob.glob('/data1/frame_level_feat/train*.tfrecord')
   
-  filepaths_completed = {}
+  f = file('/data/video_level_feat_v1/completed.pkl', 'rb')
+  filepaths_completed = pkl.load(f)
+  f.close()
   for filepath in filepaths:
     record = filepath.split('/')[-1]
-    if os.path.isfile('/data/video_level_feat_v1/completed.pkl'):
-      f = file('/data/video_level_feat_v1/completed.pkl', 'rb')
-      records_done = pkl.load(f)
-      f.close()
-      if record in records_done:
-        print(record + ' : Skipped')
-        filepaths_completed[record] = 1
-        print(len(filepaths_completed)/4096.0)
-        continue
+    if record in filepaths_completed:
+      print(record + ' : Skipped')
+      print(len(filepaths_completed)/4096.0)
+      continue
     
     serialized_example = get_serialized_example(filepath)
     raw_frame_data = get_raw_frame_data(serialized_example)

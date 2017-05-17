@@ -6,6 +6,8 @@ import itertools
 import cPickle as pkl
 import time
 import os
+import sys
+import getopt
 
 ### reading frame level tfrecords
 def get_serialized_example(filepath):
@@ -89,16 +91,29 @@ def get_processed_frame_data(rgb_frame, audio_frame, feature_list, concat_featur
 
 def extract_video_features_from_frame_features(cluster_features=False):
   start_time = time.time()
-  filepaths = glob.glob('/data1/frame_level_feat/train*.tfrecord')
+  # filepaths = glob.glob('/data1/frame_level_feat/train*.tfrecord')
+  opts, _ = getopt.getopt(sys.argv[1:],"",["inputfile=", "outputfile="])
+  for opt, arg in opts:
+    if opt in ("--inputfile"):
+      chunkfile = arg
+    if opt in ("--outputfile"):
+      compfile = arg
   
-  f = file('/data/video_level_feat_v1/completed.pkl', 'rb')
+  # filepaths to do
+  f = file(chunkfile, 'rb')
+  filepaths = pkl.load(f)
+  f.close()
+  
+  # filepaths done
+  f = file(compfile, 'rb')
   filepaths_completed = pkl.load(f)
   f.close()
+  
   for filepath in filepaths:
     record = filepath.split('/')[-1]
-    if record in filepaths_completed:
+    if filepath in filepaths_completed:
       print(record + ' : Skipped')
-      print(len(filepaths_completed)/4096.0)
+      print(len(filepaths_completed)/float(len(filepaths)))
       continue
     
     serialized_example = get_serialized_example(filepath)
@@ -143,9 +158,9 @@ def extract_video_features_from_frame_features(cluster_features=False):
         coord.join(threads)
         
         print(record + ' : Done')
-        filepaths_completed[record] = 1
-        print(len(filepaths_completed)/4096.0)
-        f = file('/data/video_level_feat_v1/completed.pkl', 'wb')
+        filepaths_completed[filepath] = 1
+        print(len(filepaths_completed)/float(len(filepaths)))
+        f = file(compfile, 'wb')
         pkl.dump(filepaths_completed, f, protocol=pkl.HIGHEST_PROTOCOL)
         f.close()
     

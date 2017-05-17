@@ -113,7 +113,7 @@ def extract_video_features_from_frame_features(cluster_features=False):
     new_filepath = '/data/video_level_feat_v1/'+record
     writer = tf.python_io.TFRecordWriter(new_filepath)
     
-    with tf.Session() as sess:
+    with tf.Session(config=tf.ConfigProto(allow_soft_placement=True,intra_op_parallelism_threads=250,use_per_session_threads=True)) as sess:
       init_op = tf.group(tf.global_variables_initializer(),tf.local_variables_initializer())
       sess.run(init_op)
       coord = tf.train.Coordinator()

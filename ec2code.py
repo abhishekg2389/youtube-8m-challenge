@@ -146,7 +146,7 @@ def extract_video_features_from_frame_features(cluster_features=False):
     # df = []
     
     # writing tfrecord v1
-    new_filepath = '/data/video_level_feat_v1/'+record
+    new_filepath = '/data/video_level_feat_v2/'+record
     writer = tf.python_io.TFRecordWriter(new_filepath)
     
     with tf.Session() as sess:

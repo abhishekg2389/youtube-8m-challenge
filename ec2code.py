@@ -158,7 +158,7 @@ def extract_video_features_from_frame_features(cluster_features=False):
           # writing tfrecord v1
           features_to_write = {key : value if key != 'video_length' else [value] for key, value in features.items()}
           features_to_write['video_id'] = [video_id]
-          features_to_write['labels'] = labels
+          features_to_write['labels'] = labels.values
           tf_features_format = {}
           for key, value in features_to_write.items():
             if key != 'video_id':

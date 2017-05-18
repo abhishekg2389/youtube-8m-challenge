@@ -134,7 +134,7 @@ def extract_video_features_from_frame_features(cluster_features=False):
     raw_frame_data = get_raw_frame_data(serialized_example)
     
     feature_list = ['video_length',
-    'q0_rgb_frame', 'q1_rgb_frame', 'q2_rgb_frame', 'q3_rgb_frame', 'q4_rgb_frame', 'mean_rgb_frame', 'stddv_rgb_frame', 'skew_rgb_frame', 'kurt_rgb_frame', 'iqr_rgb_frame', 'rng_rgb_frame'
+    'q0_rgb_frame', 'q1_rgb_frame', 'q2_rgb_frame', 'q3_rgb_frame', 'q4_rgb_frame', 'mean_rgb_frame', 'stddv_rgb_frame', 'skew_rgb_frame', 'kurt_rgb_frame', 'iqr_rgb_frame', 'rng_rgb_frame',
     'q0_audio_frame', 'q1_audio_frame', 'q2_audio_frame', 'q3_audio_frame', 'q4_audio_frame', 'mean_audio_frame', 'stddv_audio_frame', 'skew_audio_frame', 'kurt_audio_frame', 'iqr_audio_frame', 'rng_audio_frame']
     processed_frame_data = get_processed_frame_data(raw_frame_data[2], raw_frame_data[3], feature_list, concat_features=False)
     

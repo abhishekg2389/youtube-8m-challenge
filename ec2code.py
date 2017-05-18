@@ -74,6 +74,11 @@ def get_processed_frame_data(rgb_frame, audio_frame, feature_list, concat_featur
   efficiency_rgb_frame = tf.div(tf.square(stddv_rgb_frame), tf.square(mean_rgb_frame))
   midhinge_rgb_frame = tf.add(q3_rgb_frame, q1_rgb_frame)
   qntcoeffdisp_rgb_frame = tf.div(iqr_rgb_frame, midhinge_rgb_frame)
+
+  coeffvar_audio_frame = tf.div(stddv_audio_frame, mean_audio_frame)
+  efficiency_audio_frame = tf.div(tf.square(stddv_audio_frame), tf.square(mean_audio_frame))
+  midhinge_audio_frame = tf.add(q3_audio_frame, q1_audio_frame)
+  qntcoeffdisp_audio_frame = tf.div(iqr_audio_frame, midhinge_audio_frame)
   
   # Mean Absolute Difference
   md_rgb_frame = tf.div(tf.reduce_sum(tf.abs(tf.matrix_band_part(tf.subtract(tf.expand_dims(rgb_frame_trans, 2), tf.expand_dims(rgb_frame_trans, 1)), 0, -1)), reduction_indices=[1,2]), tf.cast(tf.multiply(video_length, video_length-1), tf.float32))
@@ -134,8 +139,8 @@ def extract_video_features_from_frame_features(cluster_features=False):
     raw_frame_data = get_raw_frame_data(serialized_example)
     
     feature_list = ['video_length',
-    'q0_rgb_frame', 'q1_rgb_frame', 'q2_rgb_frame', 'q3_rgb_frame', 'q4_rgb_frame', 'mean_rgb_frame', 'stddv_rgb_frame', 'skew_rgb_frame', 'kurt_rgb_frame', 'iqr_rgb_frame', 'rng_rgb_frame',
-    'q0_audio_frame', 'q1_audio_frame', 'q2_audio_frame', 'q3_audio_frame', 'q4_audio_frame', 'mean_audio_frame', 'stddv_audio_frame', 'skew_audio_frame', 'kurt_audio_frame', 'iqr_audio_frame', 'rng_audio_frame']
+    'q0_rgb_frame', 'q1_rgb_frame', 'q2_rgb_frame', 'q3_rgb_frame', 'q4_rgb_frame', 'mean_rgb_frame', 'stddv_rgb_frame', 'skew_rgb_frame', 'kurt_rgb_frame', 'iqr_rgb_frame', 'rng_rgb_frame', 'coeffvar_rgb_frame', 'efficiency_rgb_frame', 'midhinge_rgb_frame', 'qntcoeffdisp_rgb_frame', 
+    'q0_audio_frame', 'q1_audio_frame', 'q2_audio_frame', 'q3_audio_frame', 'q4_audio_frame', 'mean_audio_frame', 'stddv_audio_frame', 'skew_audio_frame', 'kurt_audio_frame', 'iqr_audio_frame', 'rng_audio_frame', 'coeffvar_audio_frame', 'efficiency_audio_frame', 'midhinge_audio_frame', 'qntcoeffdisp_audio_frame']
     processed_frame_data = get_processed_frame_data(raw_frame_data[2], raw_frame_data[3], feature_list, concat_features=False)
     
     # df = []

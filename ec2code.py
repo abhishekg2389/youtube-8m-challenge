@@ -43,6 +43,7 @@ def get_processed_frame_data(rgb_frame, audio_frame, feature_list, concat_featur
   audio_frame_trans = tf.transpose(audio_frame, perm=[1, 0])
   
   video_length = tf.shape(rgb_frame)[0]
+  
   q0_rgb_frame = tf.reduce_min(rgb_frame, reduction_indices=0)
   q1_rgb_frame = tf.reduce_min(tf.nn.top_k(rgb_frame_trans, k = tf.to_int32(tf.scalar_mul(0.75, tf.to_float(video_length))), sorted=False).values, reduction_indices=1)
   q2_rgb_frame = tf.reduce_min(tf.nn.top_k(rgb_frame_trans, k = tf.to_int32(tf.scalar_mul(0.50, tf.to_float(video_length))), sorted=False).values, reduction_indices=1)
@@ -53,8 +54,21 @@ def get_processed_frame_data(rgb_frame, audio_frame, feature_list, concat_featur
   skew_rgb_frame = tf.div(tf.reduce_mean(tf.pow(rgb_frame - mean_rgb_frame, 3), reduction_indices=0), tf.pow(stddv_rgb_frame, 3))
   kurt_rgb_frame = tf.div(tf.reduce_mean(tf.pow(rgb_frame - mean_rgb_frame, 4), reduction_indices=0), tf.pow(stddv_rgb_frame, 4))
   
+  q0_audio_frame = tf.reduce_min(audio_frame, reduction_indices=0)
+  q1_audio_frame = tf.reduce_min(tf.nn.top_k(audio_frame_trans, k = tf.to_int32(tf.scalar_mul(0.75, tf.to_float(video_length))), sorted=False).values, reduction_indices=1)
+  q2_audio_frame = tf.reduce_min(tf.nn.top_k(audio_frame_trans, k = tf.to_int32(tf.scalar_mul(0.50, tf.to_float(video_length))), sorted=False).values, reduction_indices=1)
+  q3_audio_frame = tf.reduce_min(tf.nn.top_k(audio_frame_trans, k = tf.to_int32(tf.scalar_mul(0.25, tf.to_float(video_length))), sorted=False).values, reduction_indices=1)
+  q4_audio_frame = tf.reduce_max(audio_frame, reduction_indices=0)
+  mean_audio_frame = tf.reduce_mean(audio_frame, reduction_indices=0)
+  stddv_audio_frame = tf.sqrt(tf.reduce_mean(tf.square(audio_frame - mean_audio_frame), reduction_indices=0))
+  skew_audio_frame = tf.div(tf.reduce_mean(tf.pow(audio_frame - mean_audio_frame, 3), reduction_indices=0), tf.pow(stddv_audio_frame, 3))
+  kurt_audio_frame = tf.div(tf.reduce_mean(tf.pow(audio_frame - mean_audio_frame, 4), reduction_indices=0), tf.pow(stddv_audio_frame, 4))
+  
   iqr_rgb_frame = tf.subtract(q3_rgb_frame, q1_rgb_frame)
   rng_rgb_frame = tf.subtract(q4_rgb_frame, q0_rgb_frame)
+  
+  iqr_audio_frame = tf.subtract(q3_audio_frame, q1_audio_frame)
+  rng_audio_frame = tf.subtract(q4_audio_frame, q0_audio_frame)
   
   coeffvar_rgb_frame = tf.div(stddv_rgb_frame, mean_rgb_frame)
   efficiency_rgb_frame = tf.div(tf.square(stddv_rgb_frame), tf.square(mean_rgb_frame))
@@ -119,7 +133,9 @@ def extract_video_features_from_frame_features(cluster_features=False):
     serialized_example = get_serialized_example(filepath)
     raw_frame_data = get_raw_frame_data(serialized_example)
     
-    feature_list = ['video_length', 'q0_rgb_frame', 'q1_rgb_frame', 'q2_rgb_frame', 'q3_rgb_frame', 'q4_rgb_frame', 'mean_rgb_frame', 'stddv_rgb_frame', 'skew_rgb_frame', 'kurt_rgb_frame']
+    feature_list = ['video_length',
+    'q0_rgb_frame', 'q1_rgb_frame', 'q2_rgb_frame', 'q3_rgb_frame', 'q4_rgb_frame', 'mean_rgb_frame', 'stddv_rgb_frame', 'skew_rgb_frame', 'kurt_rgb_frame', 'iqr_rgb_frame', 'rng_rgb_frame'
+    'q0_audio_frame', 'q1_audio_frame', 'q2_audio_frame', 'q3_audio_frame', 'q4_audio_frame', 'mean_audio_frame', 'stddv_audio_frame', 'skew_audio_frame', 'kurt_audio_frame', 'iqr_audio_frame', 'rng_audio_frame']
     processed_frame_data = get_processed_frame_data(raw_frame_data[2], raw_frame_data[3], feature_list, concat_features=False)
     
     # df = []
@@ -142,7 +158,7 @@ def extract_video_features_from_frame_features(cluster_features=False):
           # writing tfrecord v1
           features_to_write = {key : value if key != 'video_length' else [value] for key, value in features.items()}
           features_to_write['video_id'] = [video_id]
-          
+          features_to_write['labels'] = labels
           tf_features_format = {}
           for key, value in features_to_write.items():
             if key != 'video_id':

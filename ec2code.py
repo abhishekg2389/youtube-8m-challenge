@@ -166,10 +166,12 @@ def extract_video_features_from_frame_features(cluster_features=False):
           features_to_write['labels'] = labels.values
           tf_features_format = {}
           for key, value in features_to_write.items():
-            if key != 'video_id':
-              tf_features_format[key] = tf.train.Feature(float_list=tf.train.FloatList(value=value))
-            else:
+            if key == 'video_id':
               tf_features_format[key] = tf.train.Feature(bytes_list=tf.train.BytesList(value=value))
+            elif key == 'labels':
+              tf_features_format[key] = tf.train.Feature(int64_list=tf.train.Int64List(value=value))
+            else:
+              tf_features_format[key] = tf.train.Feature(float_list=tf.train.FloatList(value=value))
           example = tf.train.Example(features=tf.train.Features(feature=tf_features_format))
           writer.write(example.SerializeToString())
       except tf.errors.OutOfRangeError, e:

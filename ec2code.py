@@ -184,14 +184,4 @@ def extract_video_features_from_frame_features(cluster_features=False):
     writer.close()
     print(time.time() - start_time)
 
-num_files = len(glob.glob('/data/video_level_feat_v1/*'))
-num_attempts = 0
-while num_attempts < 3:
-  if num_files == len(glob.glob('/data1/frame_level_feat/*')):
-    num_attempts += 1
-    print('Sleeping for '+str(100*num_attempts)+'s')
-    time.sleep(100*num_attempts)
-  else:
-    num_files = len(glob.glob('/data/video_level_feat_v1/*'))
-    extract_video_features_from_frame_features()
-    num_attempts = 0
+extract_video_features_from_frame_features()

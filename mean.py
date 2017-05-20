@@ -4,6 +4,7 @@ import getopt
 import sys
 import cPickle as pkl
 import numpy as np
+import time
 
 opts, _ = getopt.getopt(sys.argv[1:],"",["input_file=", "output_file="])
 input_file = ""
@@ -38,6 +39,7 @@ features_format['labels'] = tf.VarLenFeature(tf.int64)
 features_format['video_length'] = tf.FixedLenFeature([], tf.float32)
 features = tf.parse_single_example(serialized_example,features=features_format)
 
+start_time = time.time()
 with tf.Session() as sess:
   init_op = tf.group(tf.global_variables_initializer(),tf.local_variables_initializer())
   sess.run(init_op)
@@ -47,16 +49,17 @@ with tf.Session() as sess:
   try:
     while True:
       proc_features, = sess.run([features])
-      for feature_name in feature_names:
-        if np.isnan(proc_features[feature_name]).sum() > 0:
-          means[feature_name][~np.isnan(proc_features[feature_name])] = (means[feature_name][~np.isnan(proc_features[feature_name])]*counter + proc_features[feature_name][~np.isnan(proc_features[feature_name])])/(counter+1)
-        elif np.isinf(proc_features[feature_name]).sum() > 0:
-          means[feature_name][~np.isinf(proc_features[feature_name])] = (means[feature_name][~np.isinf(proc_features[feature_name])]*counter + proc_features[feature_name][~np.isinf(proc_features[feature_name])])/(counter+1)
-        else:
-          means[feature_name] = (means[feature_name]*counter + proc_features[feature_name])/(counter+1)
+      #for feature_name in feature_names:
+      #  if np.isnan(proc_features[feature_name]).sum() > 0:
+      #    means[feature_name][~np.isnan(proc_features[feature_name])] = (means[feature_name][~np.isnan(proc_features[feature_name])]*counter + proc_features[feature_name][~np.isnan(proc_features[feature_name])])/(counter+1)
+      #  elif np.isinf(proc_features[feature_name]).sum() > 0:
+      #    means[feature_name][~np.isinf(proc_features[feature_name])] = (means[feature_name][~np.isinf(proc_features[feature_name])]*counter + proc_features[feature_name][~np.isinf(proc_features[feature_name])])/(counter+1)
+      #  else:
+      #    means[feature_name] = (means[feature_name]*counter + proc_features[feature_name])/(counter+1)
       counter += 1
       if(counter%10000 == 1):
         print(counter)
+        print(time.time() - start_time)
   except tf.errors.OutOfRangeError, e:
     coord.request_stop(e)
   finally:

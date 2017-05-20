@@ -15,11 +15,9 @@ for opt, arg in opts:
     output_file = arg
 
 f = open(input_file, 'rb')
-input_file_pattern = pkl.load(f)
+filepaths = pkl.load(f)
 f.close()
-input_file_pattern = [x.replace('/data2/frame_level_feat/', '/data/video_level_feat_v2/') for x in input_file_pattern]
-
-filepaths = glob.glob(input_file_pattern)
+filepaths = [x.replace('/data2/frame_level_feat/', '/data/video_level_feat_v2/') for x in filepaths]
 filepaths_queue = tf.train.string_input_producer(filepaths, num_epochs=1)
 reader = tf.TFRecordReader()
 _, serialized_example = reader.read(filepaths_queue)

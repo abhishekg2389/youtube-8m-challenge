@@ -69,4 +69,5 @@ with tf.Session() as sess:
 
 f = open(output_file, 'wb')
 pkl.dump(means, f, protocol=pkl.HIGHEST_PROTOCOL)
+pkl.dump(counter, f, protocol=pkl.HIGHEST_PROTOCOL)
 f.close()

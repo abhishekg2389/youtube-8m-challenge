@@ -90,8 +90,8 @@ for record in records_chunk:
             proc_features[feature_name][np.isinf(proc_features[feature_name])] = means[feature_name][np.isinf(proc_features[feature_name])]
         
         # writing tfrecord v1
-        proc_features['video_id'] = proc_features['video_id']
-        proc_features['video_length'] = proc_features['video_length']
+        proc_features['video_id'] = [proc_features['video_id']]
+        proc_features['video_length'] = [proc_features['video_length']]
         proc_features['labels'] = proc_features['labels'].values
         tf_features_format = {}
         for key, value in proc_features.items():

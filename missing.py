@@ -5,6 +5,7 @@ import sys
 import cPickle as pkl
 import numpy as np
 import time
+import os
 
 opts, _ = getopt.getopt(sys.argv[1:],"",["chunk_file_path=", "comp_file_path=", "means_file_path=", "output_dir=", "input_dir="])
 chunk_file_path = "../video_level_feat_v1/train*.tfrecord"

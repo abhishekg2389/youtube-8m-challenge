@@ -114,7 +114,7 @@ for record in records_chunk:
       coord.join(threads)
       
       print(record + ' : Done')
-      records_comp[filepath] = 1
+      records_comp[record] = 1
       print(len(records_comp)/float(len(records_chunk)))
       f = file(comp_file_path, 'wb')
       pkl.dump(records_comp, f, protocol=pkl.HIGHEST_PROTOCOL)

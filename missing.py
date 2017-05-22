@@ -52,7 +52,6 @@ for x in ['q0', 'q1', 'q2', 'q3', 'q4', 'mean', 'stddv', 'skew', 'kurt', 'iqr', 
 features_format['video_id'] = tf.FixedLenFeature([], tf.string)
 features_format['labels'] = tf.VarLenFeature(tf.int64)
 features_format['video_length'] = tf.FixedLenFeature([], tf.float32)
-features = tf.parse_single_example(serialized_example,features=features_format)
 
 start_time = time.time()
 
@@ -69,6 +68,11 @@ for record in records_chunk:
     print(record + ' : Skipped')
     print(len(records_comp)/float(len(records_chunk)))
     continue
+  
+  filepaths_queue = tf.train.string_input_producer([input_dir+record], num_epochs=1)
+  reader = tf.TFRecordReader()
+  _, serialized_example = reader.read(filepaths_queue)
+  features = tf.parse_single_example(serialized_example,features=features_format)
   
   new_filepath = output_dir+record
   writer = tf.python_io.TFRecordWriter(new_filepath)
@@ -103,10 +107,6 @@ for record in records_chunk:
             tf_features_format[key] = tf.train.Feature(float_list=tf.train.FloatList(value=value))
         example = tf.train.Example(features=tf.train.Features(feature=tf_features_format))
         writer.write(example.SerializeToString())
-        
-        if(counter%100000 == 1):
-          print(counter)
-          print(time.time() - start_time)
     except tf.errors.OutOfRangeError, e:
       coord.request_stop(e)
     finally:

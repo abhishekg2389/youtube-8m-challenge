@@ -57,9 +57,12 @@ start_time = time.time()
 
 for record in records_chunk:
   # filepaths done
-  f = file(comp_file_path, 'rb')
-  records_comp = pkl.load(f)
-  f.close()
+  if os.path.isfile(comp_file_path):
+    f = file(comp_file_path, 'rb')
+    records_comp = pkl.load(f)
+    f.close()
+  else:
+    records_comp = {}
   
   if record in records_comp:
     print(record + ' : Skipped')

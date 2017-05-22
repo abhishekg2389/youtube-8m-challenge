@@ -81,7 +81,7 @@ for record in records_chunk:
     counter = 0
     try:
       while True:
-        features_proc, = sess.run([features])
+        proc_features, = sess.run([features])
         counter += 1
         for feature_name in feature_names:
           if np.isnan(proc_features[feature_name]).sum() > 0:

@@ -95,7 +95,6 @@ for record in records_chunk:
         proc_features['labels'] = proc_features['labels'].values
         tf_features_format = {}
         for key, value in proc_features.items():
-          print(key)
           if key == 'video_id':
             tf_features_format[key] = tf.train.Feature(bytes_list=tf.train.BytesList(value=value))
           elif key == 'labels':

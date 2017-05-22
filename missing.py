@@ -91,9 +91,9 @@ for record in records_chunk:
         
         # writing tfrecord v1
         features_to_write = {key : value for key, value in features.items()}
-        features_to_write['video_id'] = [video_id]
-        features_to_write['video_length'] = [video_length]
-        features_to_write['labels'] = labels.values
+        features_to_write['video_id'] = proc_features['video_id']
+        features_to_write['video_length'] = proc_features['video_length']
+        features_to_write['labels'] = proc_features['labels'].values
         tf_features_format = {}
         for key, value in features_to_write.items():
           if key == 'video_id':

@@ -106,6 +106,7 @@ for record in records_chunk:
         
         if(counter%100000 == 1):
           print(counter)
+          print(time.time() - start_time)
     except tf.errors.OutOfRangeError, e:
       coord.request_stop(e)
     finally:

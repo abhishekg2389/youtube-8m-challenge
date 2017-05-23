@@ -19,7 +19,7 @@ for opt, arg in opts:
   if opt in ("--output_file"):
     output_file = arg
 
-f = open(input_dir, 'rb')
+f = open(input_file, 'rb')
 filepaths = pkl.load(f)
 f.close()
 

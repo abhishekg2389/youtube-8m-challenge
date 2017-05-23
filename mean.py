@@ -18,7 +18,7 @@ for opt, arg in opts:
 f = open(input_file, 'rb')
 filepaths = pkl.load(f)
 f.close()
-filepaths = [x.replace('/data2/frame_level_feat/', '/data/video_level_feat_v2/') for x in filepaths]
+filepaths = ['/data/video_level_feat_v3/' + x for x in filepaths]
 filepaths_queue = tf.train.string_input_producer(filepaths, num_epochs=1)
 reader = tf.TFRecordReader()
 _, serialized_example = reader.read(filepaths_queue)
@@ -50,11 +50,11 @@ with tf.Session() as sess:
     while True:
       proc_features, = sess.run([features])
       for feature_name in feature_names:
-        if np.isnan(proc_features[feature_name]).sum() > 0:
-          means[feature_name][~np.isnan(proc_features[feature_name])] = (means[feature_name][~np.isnan(proc_features[feature_name])]*counter + proc_features[feature_name][~np.isnan(proc_features[feature_name])])/(counter+1)
-        elif np.isinf(proc_features[feature_name]).sum() > 0:
-          means[feature_name][~np.isinf(proc_features[feature_name])] = (means[feature_name][~np.isinf(proc_features[feature_name])]*counter + proc_features[feature_name][~np.isinf(proc_features[feature_name])])/(counter+1)
-        else:
+#         if np.isnan(proc_features[feature_name]).sum() > 0:
+#           means[feature_name][~np.isnan(proc_features[feature_name])] = (means[feature_name][~np.isnan(proc_features[feature_name])]*counter + proc_features[feature_name][~np.isnan(proc_features[feature_name])])/(counter+1)
+#         elif np.isinf(proc_features[feature_name]).sum() > 0:
+#           means[feature_name][~np.isinf(proc_features[feature_name])] = (means[feature_name][~np.isinf(proc_features[feature_name])]*counter + proc_features[feature_name][~np.isinf(proc_features[feature_name])])/(counter+1)
+#         else:
           means[feature_name] = (means[feature_name]*counter + proc_features[feature_name])/(counter+1)
       counter += 1
       if(counter%10000 == 1):

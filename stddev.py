@@ -6,7 +6,7 @@ import cPickle as pkl
 import numpy as np
 import time
 
-opts, _ = getopt.getopt(sys.argv[1:],"",["input_file=", "output_file=", "means_file_path="])
+opts, _ = getopt.getopt(sys.argv[1:],"",["input_dir=", "input_file=", "output_file=", "means_file_path="])
 input_dir = ""
 input_file = ""
 output_file = ""

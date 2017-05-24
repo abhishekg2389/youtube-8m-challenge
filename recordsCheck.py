@@ -30,9 +30,11 @@ f.close()
 if(os.path.isfile(output_file)):
   f = open(output_file, 'rb')
   errors = pkl.load(f)
+  counter = pkl.load(f) - 1
   f.close()
 else:
   errors = []
+  counter = start_from - 1
 
 filepaths = [input_dir+x for x in filepaths]
 
@@ -51,20 +53,19 @@ features_format['video_length'] = tf.FixedLenFeature([], tf.float32)
 start_time = time.time()
 counter = start_from-1
 
-with tf.Session() as sess:
-  init_op = tf.group(tf.global_variables_initializer(),tf.local_variables_initializer())
-  sess.run(init_op)
-  coord = tf.train.Coordinator()
-  threads = tf.train.start_queue_runners(coord=coord)
+for filepath in filepaths[start_from-1:]:
+  print(counter)
+  counter += 1
+  filepaths_queue = tf.train.string_input_producer([filepath], num_epochs=1)
+  reader = tf.TFRecordReader()
+  _, serialized_example = reader.read(filepaths_queue)
   
-  for filepath in filepaths[start_from-1:]:
-    print(counter)
-    counter += 1
-    filepaths_queue = tf.train.string_input_producer([filepath], num_epochs=1)
-    reader = tf.TFRecordReader()
-    _, serialized_example = reader.read(filepaths_queue)
-    
-    features = tf.parse_single_example(serialized_example,features=features_format)
+  features = tf.parse_single_example(serialized_example,features=features_format)
+  with tf.Session() as sess:
+    init_op = tf.group(tf.global_variables_initializer(),tf.local_variables_initializer())
+    sess.run(init_op)
+    coord = tf.train.Coordinator()
+    threads = tf.train.start_queue_runners(coord=coord)
     try:
       while True:
           proc_features, = sess.run([features])

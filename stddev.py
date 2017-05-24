@@ -21,7 +21,7 @@ for opt, arg in opts:
   if opt in ("--means_file_path"):
     means_file_path = arg
 
-f = open(means_file_path, 'wb')
+f = open(means_file_path, 'rb')
 means_agg = pkl.load(f)
 f.close()
 

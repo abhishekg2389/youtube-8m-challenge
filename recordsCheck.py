@@ -50,7 +50,14 @@ features_format['video_length'] = tf.FixedLenFeature([], tf.float32)
 
 start_time = time.time()
 counter = start_from-1
-for filepath in filepaths[start_from-1:]:
+
+with tf.Session() as sess:
+  init_op = tf.group(tf.global_variables_initializer(),tf.local_variables_initializer())
+  sess.run(init_op)
+  coord = tf.train.Coordinator()
+  threads = tf.train.start_queue_runners(coord=coord)
+  
+  for filepath in filepaths[start_from-1:]:
     print(counter)
     counter += 1
     filepaths_queue = tf.train.string_input_producer([filepath], num_epochs=1)
@@ -58,29 +65,23 @@ for filepath in filepaths[start_from-1:]:
     _, serialized_example = reader.read(filepaths_queue)
     
     features = tf.parse_single_example(serialized_example,features=features_format)
-
-    with tf.Session() as sess:
-      init_op = tf.group(tf.global_variables_initializer(),tf.local_variables_initializer())
-      sess.run(init_op)
-      coord = tf.train.Coordinator()
-      threads = tf.train.start_queue_runners(coord=coord)
-      try:
-        while True:
+    try:
+      while True:
           proc_features, = sess.run([features])
       except tf.errors.OutOfRangeError, e:
-        coord.request_stop(e)
+          coord.request_stop(e)
       except:
-        print("ERROR : "+filepath)
-        errors.append(filepath)
-        f = open(output_file, 'wb')
-        pkl.dump(errors, f, protocol=pkl.HIGHEST_PROTOCOL)
-        pkl.dump(counter, f, protocol=pkl.HIGHEST_PROTOCOL)
-        f.close()
+          print("ERROR : "+filepath)
+          errors.append(filepath)
+          f = open(output_file, 'wb')
+          pkl.dump(errors, f, protocol=pkl.HIGHEST_PROTOCOL)
+          pkl.dump(counter, f, protocol=pkl.HIGHEST_PROTOCOL)
+          f.close()
       finally:
-        print(time.time() - start_time)
-        coord.request_stop()
-        coord.join(threads)
- 
+          print(time.time() - start_time)
+          coord.request_stop()
+          coord.join(threads)
+
 f = open(output_file, 'wb')
 pkl.dump(errors, f, protocol=pkl.HIGHEST_PROTOCOL)
 pkl.dump(counter, f, protocol=pkl.HIGHEST_PROTOCOL)

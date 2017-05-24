@@ -5,11 +5,13 @@ import sys
 import cPickle as pkl
 import numpy as np
 import time
+import os
 
-opts, _ = getopt.getopt(sys.argv[1:],"",["input_dir=", "input_file=", "output_file="])
+opts, _ = getopt.getopt(sys.argv[1:],"",["input_dir=", "input_file=", "output_file=", "start_from="])
 input_dir = "/data/video_level_feat_v3/"
 input_file = ""
 output_file = ""
+start_from = ""
 print(opts)
 for opt, arg in opts:
   if opt in ("--input_dir"):
@@ -18,10 +20,19 @@ for opt, arg in opts:
     input_file = arg
   if opt in ("--output_file"):
     output_file = arg
+  if opt in ("--start_from"):
+    start_from = int(float(arg))
 
 f = open(input_file, 'rb')
 filepaths = pkl.load(f)
 f.close()
+
+if(os.path.isfile(output_file)):
+  f = open(output_file, 'rb')
+  errors = pkl.load(f)
+  f.close()
+else:
+  errors = []
 
 filepaths = [input_dir+x for x in filepaths]
 
@@ -38,9 +49,8 @@ features_format['labels'] = tf.VarLenFeature(tf.int64)
 features_format['video_length'] = tf.FixedLenFeature([], tf.float32)
 
 start_time = time.time()
-errors = []
-counter = 0
-for filepath in filepaths:
+counter = start_from-1
+for filepath in filepaths[start_from-1:]:
     print(counter)
     counter += 1
     filepaths_queue = tf.train.string_input_producer([filepath], num_epochs=1)

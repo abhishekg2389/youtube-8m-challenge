@@ -68,19 +68,19 @@ with tf.Session() as sess:
     try:
       while True:
           proc_features, = sess.run([features])
-      except tf.errors.OutOfRangeError, e:
-          coord.request_stop(e)
-      except:
-          print("ERROR : "+filepath)
-          errors.append(filepath)
-          f = open(output_file, 'wb')
-          pkl.dump(errors, f, protocol=pkl.HIGHEST_PROTOCOL)
-          pkl.dump(counter, f, protocol=pkl.HIGHEST_PROTOCOL)
-          f.close()
-      finally:
-          print(time.time() - start_time)
-          coord.request_stop()
-          coord.join(threads)
+    except tf.errors.OutOfRangeError, e:
+      coord.request_stop(e)
+    except:
+      print("ERROR : "+filepath)
+      errors.append(filepath)
+      f = open(output_file, 'wb')
+      pkl.dump(errors, f, protocol=pkl.HIGHEST_PROTOCOL)
+      pkl.dump(counter, f, protocol=pkl.HIGHEST_PROTOCOL)
+      f.close()
+    finally:
+      print(time.time() - start_time)
+      coord.request_stop()
+      coord.join(threads)
 
 f = open(output_file, 'wb')
 pkl.dump(errors, f, protocol=pkl.HIGHEST_PROTOCOL)

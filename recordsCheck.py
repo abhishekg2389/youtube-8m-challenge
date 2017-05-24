@@ -72,6 +72,10 @@ for filepath in filepaths[start_from-1:]:
       except:
         print("ERROR : "+filepath)
         errors.append(filepath)
+        f = open(output_file, 'wb')
+        pkl.dump(errors, f, protocol=pkl.HIGHEST_PROTOCOL)
+        pkl.dump(counter, f, protocol=pkl.HIGHEST_PROTOCOL)
+        f.close()
       finally:
         print(time.time() - start_time)
         coord.request_stop()

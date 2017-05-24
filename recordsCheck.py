@@ -51,7 +51,6 @@ features_format['labels'] = tf.VarLenFeature(tf.int64)
 features_format['video_length'] = tf.FixedLenFeature([], tf.float32)
 
 start_time = time.time()
-counter = start_from-1
 
 for filepath in filepaths[start_from-1:]:
   print(counter)

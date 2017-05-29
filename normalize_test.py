@@ -7,7 +7,7 @@ import numpy as np
 import time
 import os
 
-opts, _ = getopt.getopt(sys.argv[1:],"",["means_file_path=", "output_dir=", "input_dir=", "input_file=", "output_file=", "videos_done_filepath="])
+opts, _ = getopt.getopt(sys.argv[1:],"",["stddevs_file_path=", "means_file_path=", "output_dir=", "input_dir=", "input_file=", "output_file=", "videos_done_filepath="])
 for opt, arg in opts:
   if opt in ("--input_file"):
     input_file = arg
@@ -23,6 +23,8 @@ for opt, arg in opts:
     means_file_path = arg
   if opt in ("--stddevs_file_path"):
     stddevs_file_path = arg
+  if opt in ("--videos_done_filepath"):
+    videos_done_filepath = arg
 
 # filepaths to do
 f = file(input_file, 'rb')

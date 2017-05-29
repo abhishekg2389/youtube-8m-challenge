@@ -58,14 +58,14 @@ start_time = time.time()
 for record in records_todo:
   if os.path.isfile(output_file):
     f = file(output_file, 'rb')
-    records_comp = pkl.load(f)
+    records_done = pkl.load(f)
     f.close()
   else:
-    records_comp = {}
+    records_done = {}
   
-  if record in records_comp:
+  if record in records_done:
     print(record + ' : Skipped')
-    print(len(records_comp)/float(len(records_todo)))
+    print(len(records_done)/float(len(records_todo)))
     continue
   
   filepaths_queue = tf.train.string_input_producer([input_dir+record], num_epochs=1)
@@ -103,6 +103,7 @@ for record in records_todo:
             tf_features_format[key] = tf.train.Feature(float_list=tf.train.FloatList(value=value))
         example = tf.train.Example(features=tf.train.Features(feature=tf_features_format))
         writer.write(example.SerializeToString())
+        videos_done[proc_features['video_id']+"_"+record] = 1
     except tf.errors.OutOfRangeError, e:
       coord.request_stop(e)
     finally:

@@ -7,25 +7,6 @@ import numpy as np
 import time
 import os
 
-opts, _ = getopt.getopt(sys.argv[1:],"",["chunk_file_path=", "comp_file_path=", "means_file_path=", "output_dir=", "input_dir="])
-chunk_file_path = "../video_level_feat_v1/train*.tfrecord"
-comp_file_path = "../video_level_feat_v1/train*.tfrecord"
-means_file_path = "../video_level_feat_v1/means.pkl"
-output_dir = "../video_level_feat_v1/"
-input_dir = "../video_level_feat_v1/"
-print(opts)
-for opt, arg in opts:
-  if opt in ("--chunk_file_path"):
-    chunk_file_path = arg
-  if opt in ("--comp_file_path"):
-    comp_file_path = arg
-  if opt in ("--means_file_path"):
-    means_file_path = arg
-  if opt in ("--output_dir"):
-    output_dir = arg
-  if opt in ("--input_dir"):
-    input_dir = arg
-
 opts, _ = getopt.getopt(sys.argv[1:],"",["means_file_path=", "output_dir=", "input_dir=", "input_file=", "output_file=", "videos_done_filepath="])
 for opt, arg in opts:
   if opt in ("--input_file"):

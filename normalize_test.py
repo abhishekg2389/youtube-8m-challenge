@@ -41,6 +41,11 @@ f = open(stddevs_file_path, 'rb')
 stddevs = pkl.load(f)
 f.close()
 
+# videos done
+f = file(videos_done_filepath, 'rb')
+videos_done = pkl.load(f)
+f.close()
+
 features_format = {}
 feature_names = []
 for x in ['q0', 'q1', 'q2', 'q3', 'q4', 'mean', 'stddv', 'skew', 'kurt', 'iqr', 'rng', 'coeffvar', 'efficiency']:

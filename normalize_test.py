@@ -108,7 +108,7 @@ for record in records_todo:
             tf_features_format[key] = tf.train.Feature(float_list=tf.train.FloatList(value=value))
         example = tf.train.Example(features=tf.train.Features(feature=tf_features_format))
         writer.write(example.SerializeToString())
-        videos_done[proc_features['video_id']+"_"+record] = 1
+        videos_done[proc_features['video_id'][0]+"_"+record] = 1
     except tf.errors.OutOfRangeError, e:
       coord.request_stop(e)
     finally:

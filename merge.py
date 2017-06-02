@@ -36,7 +36,7 @@ for j in range(71):
     lines = [[vids[k], " ".join("%i %f" % pair for pair in line)] for k, line in enumerate(lines)]
     df = pd.DataFrame(lines)
     if(j==0):
-        df.to_csv('/data2/pred/c.csv', index=False, header=['VideoId','LabelConfidencePairs'], mode='a')
+        df.to_csv('/data2/pred/c1.csv', index=False, header=['VideoId','LabelConfidencePairs'], mode='a')
     else:
-        df.to_csv('/data2/pred/c.csv', index=False, header=False, mode='a')
+        df.to_csv('/data2/pred/c1.csv', index=False, header=False, mode='a')
     print(time.time() - tm)

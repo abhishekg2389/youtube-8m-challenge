@@ -19,7 +19,7 @@ for i, pc in enumerate(pred_csv):
 tm = time.time()
 for j in range(71):
     if j == 70:
-        mat = np.zeros((10000, 640))
+        mat = np.zeros((640, 4716))
     else:
         mat = np.zeros((10000, 4716))
     for i, rdr in enumerate(rdrs):
